@@ -5,14 +5,14 @@ from flask import jsonify
 from flask import flash, request
 
 #GET
-@app.route('/customdevice', methods=['GET'])
-def getAllCustomDevices():
+@app.route('/device', methods=['GET'])
+def getAllDevices():
     conn = None
     cursor = None
     try:
 	    conn = mysql.connect()
 	    cursor = conn.cursor(pymysql.cursors.DictCursor)
-	    cursor.execute("SELECT * FROM customdevice")
+	    cursor.execute("SELECT * FROM device")
 	    rows = cursor.fetchall()
 	    res = jsonify(rows)
 	    res.status_code = 200
@@ -23,48 +23,44 @@ def getAllCustomDevices():
 	    cursor.close()
 	    conn.close()
 
-
 #POST
-@app.route('/customdevice', methods=['POST'])
-def createCustomDevice():
+@app.route('/device', methods=['POST'])
+def createDevice():
     conn = None
     cursor = None
     try:
         _json = request.json
         _id = _json['id']
-        _roomID = _json['roomID']
         _name = _json['name']
-        _param = _json['param']
-        _is_active = _json['is_active']
         _created = _json['created_at']
         _updated = _json['updated_at']
         #validate
-        if _id!=None and _roomID!=None and _name!=None and _param!=None and _is_active!=None and request.method == 'POST':
+        if _id!=None and _name!=None and request.method == 'POST':
             #save edited
-            sql = "INSERT INTO customdevice VALUES(%s, %s, %s, %s, %s, %s, %s)"
-            data = (_id, _roomID, _name, _param, _is_active, _created, _updated)
+            sql = "INSERT INTO device VALUES(%s, %s, %s, %s)"
+            data = (_id, _name, _created, _updated)
             conn = mysql.connect()
             cursor = conn.cursor()
             cursor.execute(sql, data)
             conn.commit()
-            res = jsonify("Customedevice created successfully")
+            res = jsonify("Device created successfully")
             res.status_code = 200
             return res
         else:
-            res = jsonify("Cannot create customedevice!")
+            res = jsonify("Cannot create device!")
             return res
     except Exception as e:
         print(e)
 
 #Search one
-@app.route('/customdevice/<int:id>')
-def findCustomDevice(id):
+@app.route('/device/<int:id>')
+def findDevice(id):
     conn = None
     cursor = None
     try:
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT * FROM customdevice WHERE id = %s", id)
+        cursor.execute("SELECT * FROM device WHERE id = %s", id)
         row = cursor.fetchone()
         res = jsonify(row)
         res.status_code = 200
@@ -77,44 +73,41 @@ def findCustomDevice(id):
 
 #PUT
 @app.route('/update_dv/<int:id>', methods=['PUT'])
-def updateCustomDevice(id):
+def updateDevice(id):
     conn = None
     cursor = None
     try:
         _json = request.json
-        _roomID = _json['roomID']
         _name = _json['name']
-        _param = _json['param']
-        _is_active = _json['is_active']
 
-        if id!=None and _roomID!=None and _name!=None and _param!=None and _is_active!=None and request.method == 'PUT':
+        if id!=None and request.method == 'PUT':
             #update
-            sql = "UPDATE customdevice SET roomID=%s, name=%s, param=%s, is_active=%s WHERE id=%s"
-            data = (_roomID, _name, _param, _is_active, id)
+            sql = "UPDATE device SET name=%s WHERE id=%s"
+            data = (_name, id)
             conn = mysql.connect()
             cursor = conn.cursor()
             cursor.execute(sql, data)
             conn.commit()
-            res = jsonify("Update customdevice successfully")
+            res = jsonify("Update device successfully")
             res.status_code = 200
             return res
         else:
-            res = jsonify("Update customdevice failed")
+            res = jsonify("Update device failed")
             return res
     except Exception as e:
         print(e)
 
 #DELETE
 @app.route('/delele_dv/<int:id>', methods=['DELETE'])
-def deleteCustomDevices(id):
+def deleteDevices(id):
     conn = None
     cursor = None
     try:
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM customdevice WHERE id=%s", id)
+        cursor.execute("DELETE FROM device WHERE id=%s", id)
         conn.commit()
-        res = jsonify("Delete customdevice successfully")
+        res = jsonify("Delete device successfully")
         res.status_code = 200
         return res
     except Exception as e:
