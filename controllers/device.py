@@ -3,6 +3,7 @@ from app import app
 from utils.db import mysql
 from flask import jsonify
 from flask import flash, request
+from datetime import datetime
 
 #GET
 @app.route('/device', methods=['GET'])
@@ -32,8 +33,10 @@ def createDevice():
         _json = request.json
         _id = _json['id']
         _name = _json['name']
-        _created = _json['created_at']
-        _updated = _json['updated_at']
+        # _created = _json['created_at']
+        # _updated = _json['updated_at']
+        _created = datetime.utcnow()
+        _updated = datetime.utcnow()
         #validate
         if _id!=None and _name!=None and request.method == 'POST':
             #save edited
@@ -79,11 +82,11 @@ def updateDevice(id):
     try:
         _json = request.json
         _name = _json['name']
-
+        _updated_at = datetime.utcnow()
         if id!=None and request.method == 'PUT':
             #update
-            sql = "UPDATE device SET name=%s WHERE id=%s"
-            data = (_name, id)
+            sql = "UPDATE device SET name=%s, updated_at=%s WHERE id=%s"
+            data = (_name, _updated_at, id)
             conn = mysql.connect()
             cursor = conn.cursor()
             cursor.execute(sql, data)
@@ -108,6 +111,7 @@ def deleteDevices(id):
         cursor.execute("DELETE FROM device WHERE id=%s", id)
         conn.commit()
         res = jsonify("Delete device successfully")
+        print(type(res))
         res.status_code = 200
         return res
     except Exception as e:
