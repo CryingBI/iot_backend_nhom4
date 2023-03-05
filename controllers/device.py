@@ -37,22 +37,19 @@ def createDevice():
     cursor = None
     try:
         _json = request.json
-        _id = _json['id']
         _name = _json['name']
-        # _created = _json['created_at']
-        # _updated = _json['updated_at']
         _created = datetime.utcnow()
         _updated = datetime.utcnow()
         #validate
-        if _id!=None and _name!=None and request.method == 'POST':
+        if  _name!=None and request.method == 'POST':
             #save edited
-            sql = "INSERT INTO device VALUES(%s, %s, %s, %s)"
-            data = (_id, _name, _created, _updated)
+            sql = "INSERT INTO device (name, created_at, updated_at) VALUES(%s, %s, %s)"
+            data = (_name, _created, _updated)
             conn = mysql.connect()
             cursor = conn.cursor()
             cursor.execute(sql, data)
             conn.commit()
-            res = jsonify("Device created successfully")
+            res = jsonify({"message": "Device successfully"})
             res.status_code = 200
             return res
         else:
@@ -82,7 +79,7 @@ def findDevice(id):
         conn.close()
 
 #PUT
-@app.route('/update_dv/<int:id>', methods=['PUT'], endpoint='updateDevice')
+@app.route('/device/<int:id>/update', methods=['POST'], endpoint='updateDevice')
 @jwt_required()
 def updateDevice(id):
     conn = None
@@ -109,7 +106,7 @@ def updateDevice(id):
         print(e)
 
 #DELETE
-@app.route('/delele_dv/<int:id>', methods=['DELETE'], endpoint='deleteDevices')
+@app.route('/device/<int:id>/delete', methods=['POST'], endpoint='deleteDevices')
 @jwt_required()
 def deleteDevices(id):
     conn = None

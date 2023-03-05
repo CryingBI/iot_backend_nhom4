@@ -19,7 +19,7 @@ def getAllHouses():
     try:
 	    conn = mysql.connect()
 	    cursor = conn.cursor(pymysql.cursors.DictCursor)
-	    cursor.execute("SELECT * FROM house")
+	    cursor.execute("SELECT * FROM house, user WHERE house.user_id = user.id")
 	    rows = cursor.fetchall()
 	    res = jsonify(rows)
 	    res.status_code = 200
@@ -38,26 +38,25 @@ def createHouse():
     cursor = None
     try:
         _json = request.json
-        _id = _json['id']
         _user_id = _json['user_id']
         _name = _json['name']
         _address = _json['address']
         _created = datetime.utcnow()
         _updated = datetime.utcnow()
         #validate
-        if _id!=None and _name!=None and _user_id!=None and _address!=None and request.method == 'POST':
+        if _name!=None and _user_id!=None and _address!=None and request.method == 'POST':
             #save edited
-            sql = "INSERT INTO house VALUES(%s, %s, %s, %s, %s, %s)"
-            data = (_id, _user_id, _name, _address, _created, _updated)
+            sql = "INSERT INTO house (user_id, name, address, created_at, updated_at) VALUES (%s, %s, %s, %s, %s)"
+            data = (_user_id, _name, _address, _created, _updated)
             conn = mysql.connect()
             cursor = conn.cursor()
             cursor.execute(sql, data)
             conn.commit()
-            res = jsonify("House created successfully")
+            res = jsonify({"message": "House successfully"})
             res.status_code = 200
             return res
         else:
-            res = jsonify("Cannot create House!")
+            res = jsonify({"message": "Cannot create"})
             return res
     except Exception as e:
         print(e)

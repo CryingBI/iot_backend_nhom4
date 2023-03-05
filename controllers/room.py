@@ -108,3 +108,4 @@ def deleteRoomOfHouse(house_id, room_id):
     finally:
         cursor.close()
         conn.close()
+
