@@ -127,6 +127,26 @@ def deleteDevices(id):
 
 
 #Huan API
+#GET detail device
+@app.route('/room/<int:room_id>/device/<int:device_id>', methods=['GET'], endpoint='getDetailDevice')
+@jwt_required()
+def getDetailDevice(room_id, device_id):
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM device_room WHERE room_id = %s AND id=%s", (room_id, device_id))
+        row = cursor.fetchone()
+        res = jsonify(row)
+        res.status_code = 200
+        return res
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
 #1 GET room/:room_id/device
 @app.route('/room/<int:room_id>/devices', methods=['GET'], endpoint='getDeviceOfRoom')
 @jwt_required()

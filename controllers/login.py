@@ -31,7 +31,7 @@ def login():
                 #can pass identity = {"email": email}
                 return jsonify(access_token=access_token)
             else:
-                return jsonify({'msg': "Wrong email or password"}), 401
+                return jsonify({'message': "Wrong email or password"}), 401
     except Exception as e:
         print(e)
     finally:
