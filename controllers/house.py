@@ -166,7 +166,7 @@ def createHouseOfUser(user_id):
         _created = datetime.utcnow()
         _updated = datetime.utcnow()
         # validate
-        if _id != None and _name != None and _address != None and request.method == 'POST':
+        if _name != None and _address != None and request.method == 'POST':
             # save edited
             sql = "INSERT INTO house (user_id, name, address, created_at, updated_at) VALUES (%s, %s, %s, %s, %s)"
             data = (user_id, _name, _address, _created, _updated)
