@@ -49,11 +49,11 @@ def createDevice():
             cursor = conn.cursor()
             cursor.execute(sql, data)
             conn.commit()
-            res = jsonify({"message": "Device successfully"})
+            res = jsonify({"message": "Create device successfully"})
             res.status_code = 200
             return res
         else:
-            res = jsonify("Cannot create device!")
+            res = jsonify({"message": "Cannot create device"})
             return res
     except Exception as e:
         print(e)
@@ -79,7 +79,7 @@ def findDevice(id):
         conn.close()
 
 #PUT
-@app.route('/device/<int:id>/update', methods=['POST'], endpoint='updateDevice')
+@app.route('/device/<int:id>/update', methods=['POST', 'PUT'], endpoint='updateDevice')
 @jwt_required()
 def updateDevice(id):
     conn = None
@@ -88,7 +88,7 @@ def updateDevice(id):
         _json = request.json
         _name = _json['name']
         _updated_at = datetime.utcnow()
-        if id!=None and request.method == 'PUT':
+        if id!=None and request.method == 'POST' or 'PUT':
             #update
             sql = "UPDATE device SET name=%s, updated_at=%s WHERE id=%s"
             data = (_name, _updated_at, id)
@@ -96,17 +96,17 @@ def updateDevice(id):
             cursor = conn.cursor()
             cursor.execute(sql, data)
             conn.commit()
-            res = jsonify("Update device successfully")
+            res = jsonify({"message": "Update device successfully"})
             res.status_code = 200
             return res
         else:
-            res = jsonify("Update device failed")
+            res = jsonify({"message": "Update device failed"})
             return res
     except Exception as e:
         print(e)
 
 #DELETE
-@app.route('/device/<int:id>/delete', methods=['POST'], endpoint='deleteDevices')
+@app.route('/device/<int:id>/delete', methods=['POST', 'DELETE'], endpoint='deleteDevices')
 @jwt_required()
 def deleteDevices(id):
     conn = None
@@ -116,8 +116,7 @@ def deleteDevices(id):
         cursor = conn.cursor()
         cursor.execute("DELETE FROM device WHERE id=%s", id)
         conn.commit()
-        res = jsonify("Delete device successfully")
-        #print(type(res))
+        res = jsonify({"message": "Delete device successfully"})
         res.status_code = 200
         return res
     except Exception as e:

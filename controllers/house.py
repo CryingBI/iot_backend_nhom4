@@ -56,7 +56,7 @@ def createHouse():
             res.status_code = 200
             return res
         else:
-            res = jsonify({"message": "Cannot create"})
+            res = jsonify({"message": "Cannot create house"})
             return res
     except Exception as e:
         print(e)
@@ -82,7 +82,7 @@ def findHouse(id):
         conn.close()
 
 #PUT
-@app.route('/update_hs/<int:id>', methods=['PUT'], endpoint='updateHouse')
+@app.route('/house/<int:id>/update', methods=['POST', 'PUT'], endpoint='updateHouse')
 @jwt_required()
 def updateHouse(id):
     conn = None
@@ -93,7 +93,7 @@ def updateHouse(id):
         _name = _json['name']
         _address = _json['address']
         _updated_at = datetime.utcnow()
-        if id!=None and _user_id!= None and request.method == 'PUT':
+        if id!=None and _user_id!= None and request.method == 'PUT' or 'POST':
             #update
             sql = "UPDATE house SET user_id=%s, name=%s, address=%s, updated_at=%s WHERE id=%s"
             data = (_user_id, _name, _address, _updated_at, id)
@@ -111,7 +111,7 @@ def updateHouse(id):
         print(e)
 
 #DELETE
-@app.route('/delele_hs/<int:id>', methods=['DELETE'], endpoint='deleteHouse')
+@app.route('/house/<int:id>/delete', methods=['DELETE'], endpoint='deleteHouse')
 @jwt_required()
 def deleteHouse(id):
     conn = None
@@ -175,17 +175,17 @@ def createHouseOfUser(user_id):
             cursor = conn.cursor()
             cursor.execute(sql, data)
             conn.commit()
-            res = jsonify("House created successfully")
+            res = jsonify({"message": "Create house successfully"})
             res.status_code = 200
             return res
         else:
-            res = jsonify("Cannot create House!")
+            res = jsonify({"message": "Create house failed"})
             return res
     except Exception as e:
         print(e)
 
 #3 PUT user/:id/house/:house_id/update
-@app.route('/user/<int:user_id>/house/<int:house_id>/update', methods=['PUT'], endpoint='updateHouseOfUser')
+@app.route('/user/<int:user_id>/house/<int:house_id>/update', methods=['PUT', 'POST'], endpoint='updateHouseOfUser')
 @jwt_required()
 def updateHouseOfUser(user_id, house_id):
     conn = None
@@ -195,7 +195,7 @@ def updateHouseOfUser(user_id, house_id):
         _name = _json['name']
         _address = _json['address']
         _updated_at = datetime.utcnow()
-        if user_id!=None and house_id!=None and _name!=None and _address!= None and request.method == 'PUT':
+        if user_id!=None and house_id!=None and _name!=None and _address!= None and request.method == 'PUT' or 'POST':
             # update
             sql = "UPDATE house SET name=%s, address=%s, updated_at=%s WHERE user_id=%s AND id=%s"
             data = (_name, _address, _updated_at, user_id, house_id)
@@ -203,17 +203,17 @@ def updateHouseOfUser(user_id, house_id):
             cursor = conn.cursor()
             cursor.execute(sql, data)
             conn.commit()
-            res = jsonify("Update house successfully")
+            res = jsonify({"message": "Update house successfully"})
             res.status_code = 200
             return res
         else:
-            res = jsonify("Update house failed")
+            res = jsonify({"message": "Update house failed"})
             return res
     except Exception as e:
         print(e)
 
 #4 DELTE user/:id/house/:house_id/delete
-@app.route('/user/<int:user_id>/house/<int:house_id>/delete', methods=['DELETE'], endpoint='deleteHouseOfUser')
+@app.route('/user/<int:user_id>/house/<int:house_id>/delete', methods=['DELETE', 'POST'], endpoint='deleteHouseOfUser')
 @jwt_required()
 def deleteHouseOfUser(user_id, house_id):
     conn = None
@@ -223,7 +223,7 @@ def deleteHouseOfUser(user_id, house_id):
         cursor = conn.cursor()
         cursor.execute("DELETE FROM house WHERE user_id=%s AND id=%s", (user_id,house_id))
         conn.commit()
-        res = jsonify("Delete house successfully")
+        res = jsonify({"message": "Delete house successfully"})
         # print(type(res))
         res.status_code = 200
         return res

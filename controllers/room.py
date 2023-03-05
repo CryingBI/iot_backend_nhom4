@@ -39,30 +39,29 @@ def createRoomOfHouse(house_id):
     cursor = None
     try:
         _json = request.json
-        _id = _json['id']
         _name = _json['name']
         _created = datetime.utcnow()
         _updated = datetime.utcnow()
         # validate
-        if _id != None and _name != None and request.method == 'POST':
+        if  _name != None and request.method == 'POST':
             # save edited
-            sql = "INSERT INTO house VALUES(%s, %s, %s, %s, %s)"
-            data = (_id, house_id, _name, _created, _updated)
+            sql = "INSERT INTO house (house_id, name, created_at, updated_at) VALUES (%s, %s, %s, %s)"
+            data = (house_id, _name, _created, _updated)
             conn = mysql.connect()
             cursor = conn.cursor()
             cursor.execute(sql, data)
             conn.commit()
-            res = jsonify("Room created successfully")
+            res = jsonify({"message": "Create room successfully"})
             res.status_code = 200
             return res
         else:
-            res = jsonify("Cannot create Room!")
+            res = jsonify({"message": "Cannot create room"})
             return res
     except Exception as e:
         print(e)
 
 #3 PUT house/:house_id/room/:room_id/update
-@app.route('/house/<int:house_id>/room/<int:room_id>/update', methods=['PUT'], endpoint='updateRoomOfHouse')
+@app.route('/house/<int:house_id>/room/<int:room_id>/update', methods=['POST', 'PUT'], endpoint='updateRoomOfHouse')
 @jwt_required()
 def updateRoomOfHouse(house_id, room_id):
     conn = None
@@ -71,7 +70,7 @@ def updateRoomOfHouse(house_id, room_id):
         _json = request.json
         _name = _json['name']
         _updated_at = datetime.utcnow()
-        if house_id!=None and room_id!=None and _name!=None and request.method == 'PUT':
+        if house_id!=None and room_id!=None and _name!=None and request.method == 'PUT' or 'POST':
             # update
             sql = "UPDATE room SET name=%s, updated_at=%s WHERE house_id=%s AND id=%s"
             data = (_name, _updated_at, house_id, room_id)
@@ -79,17 +78,17 @@ def updateRoomOfHouse(house_id, room_id):
             cursor = conn.cursor()
             cursor.execute(sql, data)
             conn.commit()
-            res = jsonify("Update room successfully")
+            res = jsonify({"message": "Update room successfully"})
             res.status_code = 200
             return res
         else:
-            res = jsonify("Update room failed")
+            res = jsonify({"message": "Update room failed"})
             return res
     except Exception as e:
         print(e)
 
 #4 DELTE house/:house_id/room/:room_id/delete
-@app.route('/house/<int:house_id>/room/<int:room_id>/delete', methods=['DELETE'], endpoint='deleteRoomOfHouse')
+@app.route('/house/<int:house_id>/room/<int:room_id>/delete', methods=['POST', 'DELETE'], endpoint='deleteRoomOfHouse')
 @jwt_required()
 def deleteRoomOfHouse(house_id, room_id):
     conn = None
@@ -99,7 +98,7 @@ def deleteRoomOfHouse(house_id, room_id):
         cursor = conn.cursor()
         cursor.execute("DELETE FROM room WHERE house_id=%s AND id=%s", (house_id,room_id))
         conn.commit()
-        res = jsonify("Delete room successfully")
+        res = jsonify({"message": "Delete room successfully"})
         # print(type(res))
         res.status_code = 200
         return res
