@@ -5,7 +5,7 @@ from controllers.login import login
 from controllers.user import *
 from controllers.room import *
 from controllers.house import *
-
+from controllers.control import *
 # @app.after_request
 # def after_request(response):
 #   response.headers.add('Access-Control-Allow-Origin', '*')

@@ -31,7 +31,6 @@ def getAllUsers():
 
 #POST
 @app.route('/user', methods=['POST'], endpoint='createUser')
-@cross_origin(orgin='*')
 @jwt_required()
 def createUser():
     conn = None
