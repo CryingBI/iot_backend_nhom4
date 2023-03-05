@@ -19,7 +19,7 @@ def getDetailHouse(id):
     try:
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT user.name as username, email, house.name as name, address, created_at, updated_at FROM house, user WHERE house.id = %s", id)
+        cursor.execute("SELECT house.id, user.name as username, email, house.name as name, address, created_at, updated_at FROM house, user WHERE house.id = %s", id)
         row = cursor.fetchone()
         res = jsonify(row)
         res.status_code = 200
