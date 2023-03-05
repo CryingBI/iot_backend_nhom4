@@ -161,7 +161,6 @@ def createHouseOfUser(user_id):
     cursor = None
     try:
         _json = request.json
-        _id = _json['id']
         _name = _json['name']
         _address = _json['address']
         _created = datetime.utcnow()
@@ -169,8 +168,8 @@ def createHouseOfUser(user_id):
         # validate
         if _id != None and _name != None and _address != None and request.method == 'POST':
             # save edited
-            sql = "INSERT INTO house VALUES(%s, %s, %s, %s, %s, %s)"
-            data = (_id, user_id, _name, _address, _created, _updated)
+            sql = "INSERT INTO house (user_id, name, address, created_at, updated_at) VALUES (%s, %s, %s, %s, %s)"
+            data = (user_id, _name, _address, _created, _updated)
             conn = mysql.connect()
             cursor = conn.cursor()
             cursor.execute(sql, data)

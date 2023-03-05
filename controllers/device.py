@@ -147,31 +147,86 @@ def getDeviceOfRoom(room_id):
         cursor.close()
         conn.close()
 
-# #2 POST house/:house_id/room
-# @app.route('/room/<int:room_id>/device', methods=['POST'], endpoint='createDeviceOfRoom')
-# @jwt_required()
-# def createDeviceOfRoom(room_id):
-#     conn = None
-#     cursor = None
-#     try:
-#         _json = request.json
-#         _code = _json['code']
-#         _created = datetime.utcnow()
-#         _updated = datetime.utcnow()
-#         # validate
-#         if  _name != None and request.method == 'POST':
-#             # save edited
-#             sql = "INSERT INTO house (house_id, name, created_at, updated_at) VALUES (%s, %s, %s, %s)"
-#             data = (house_id, _name, _created, _updated)
-#             conn = mysql.connect()
-#             cursor = conn.cursor()
-#             cursor.execute(sql, data)
-#             conn.commit()
-#             res = jsonify({"message": "Create room successfully"})
-#             res.status_code = 200
-#             return res
-#         else:
-#             res = jsonify({"message": "Cannot create room"})
-#             return res
-#     except Exception as e:
-#         print(e)
+#2 POST room/:room_id/device
+@app.route('/room/<int:room_id>/device', methods=['POST'], endpoint='createDeviceOfRoom')
+@jwt_required()
+def createDeviceOfRoom(room_id):
+    conn = None
+    cursor = None
+    try:
+        _json = request.json
+        _code = _json['code']
+        _device_id = _json['device_id']
+        _is_active = _json['is_active']
+        _param = _json['param']
+        _created = datetime.utcnow()
+        _updated = datetime.utcnow()
+        # validate
+        if  _code != None and request.method == 'POST':
+            # save edited
+            sql = "INSERT INTO device_room (code, device_id, room_id, is_active, param, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            data = (_code, _device_id, room_id, _is_active, _param, _created, _updated)
+            conn = mysql.connect()
+            cursor = conn.cursor()
+            cursor.execute(sql, data)
+            conn.commit()
+            res = jsonify({"message": "Create device successfully"})
+            res.status_code = 200
+            return res
+        else:
+            res = jsonify({"message": "Cannot create device"})
+            return res
+    except Exception as e:
+        print(e)
+
+#3 PUT room/:room_id/device/:device_id/update
+@app.route('/room/<int:room_id>/device/<int:id>/update', methods=['POST', 'PUT'], endpoint='updateDeviceOfRoom')
+@jwt_required()
+def updateDeviceOfRoom(room_id, id):
+    conn = None
+    cursor = None
+    try:
+        _json = request.json
+        _json = request.json
+        _code = _json['code']
+        _device_id = _json['device_id']
+        _is_active = _json['is_active']
+        _param = _json['param']
+        _updated = datetime.utcnow()
+        if _code!=None and request.method == 'PUT' or 'POST':
+            # update
+            sql = "UPDATE device_room SET code=%s, device_id=%s, is_active=%s, param=%s, updated_at=%s WHERE room_id=%s AND id=%s"
+            data = (_code, _device_id, _is_active, _param, _updated, room_id, id)
+            conn = mysql.connect()
+            cursor = conn.cursor()
+            cursor.execute(sql, data)
+            conn.commit()
+            res = jsonify({"message": "Update device successfully"})
+            res.status_code = 200
+            return res
+        else:
+            res = jsonify({"message": "Update device failed"})
+            return res
+    except Exception as e:
+        print(e)
+
+#3 PUT room/:room_id/device/:device_id/delete
+@app.route('/room/<int:room_id>/device/<int:id>/delete', methods=['POST', 'DELETE'], endpoint='deleteDeviceOfRoom')
+@jwt_required()
+def deleteDeviceOfRoom(room_id, id):
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM device_room WHERE room_id=%s AND id=%s", (room_id,id))
+        conn.commit()
+        res = jsonify({"message": "Delete device successfully"})
+        # print(type(res))
+        res.status_code = 200
+        return res
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
