@@ -10,6 +10,26 @@ from flask_jwt_extended import get_jwt_identity
 #Thêm filter user-house
 #thêm filler post user-house
 
+#GET detail house
+@app.route('/house/<int:id>', methods=['GET'], endpoint='getDetailHouse')
+@jwt_required()
+def getDetailHouse(id):
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT user.name as username, email, house.name as name, address, created_at, updated_at FROM house, user WHERE house.id = %s", id)
+        row = cursor.fetchone()
+        res = jsonify(row)
+        res.status_code = 200
+        return res
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
 #GET
 @app.route('/house', methods=['GET'], endpoint='getAllHouses')
 @jwt_required()
@@ -19,7 +39,7 @@ def getAllHouses():
     try:
 	    conn = mysql.connect()
 	    cursor = conn.cursor(pymysql.cursors.DictCursor)
-	    cursor.execute("SELECT * FROM house, user WHERE house.user_id = user.id")
+	    cursor.execute("SELECT user.name as username, email, user_id, house.name as name, phone_number, address, created_at, updated_at FROM house, user WHERE house.user_id = user.id")
 	    rows = cursor.fetchall()
 	    res = jsonify(rows)
 	    res.status_code = 200

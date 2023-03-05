@@ -210,7 +210,7 @@ def updateDeviceOfRoom(room_id, id):
     except Exception as e:
         print(e)
 
-#3 PUT room/:room_id/device/:device_id/delete
+#4 Delete room/:room_id/device/:device_id/delete
 @app.route('/room/<int:room_id>/device/<int:id>/delete', methods=['POST', 'DELETE'], endpoint='deleteDeviceOfRoom')
 @jwt_required()
 def deleteDeviceOfRoom(room_id, id):
