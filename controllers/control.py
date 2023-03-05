@@ -37,7 +37,7 @@ client.on_publish = on_publish
 client.subscribe("/iot_project_nhom04", qos=1)
 
 #API dieu khien thiet bi
-@app.route('/device/<int:id>/control', methods=['GET'], endpoint='controlDevice')
+@app.route('/device/<int:id>/control', methods=['PUT'], endpoint='controlDevice')
 @jwt_required()
 def controlDevice(id):
     content = None
@@ -57,7 +57,7 @@ def controlDevice(id):
         cursor.execute(sql, data)
         conn.commit()
         client.publish("/iot_project_nhom04", payload=json.dumps(_json), qos=1)
-        res = jsonify({"message": "Control device successfully"})
+        res = jsonify(_json)
         return res
     except Exception as e:
         print(e)

@@ -10,6 +10,26 @@ from flask_jwt_extended import get_jwt_identity
 #Thêm filter house-room
 #thêm filler post house-room
 
+#GET detail room
+@app.route('/room/<int:id>', methods=['GET'], endpoint='getDetailRoom')
+@jwt_required()
+def getDetailRoom(id):
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM room WHERE id=%s", id)
+        row = cursor.fetchone()
+        res = jsonify(row)
+        res.status_code = 200
+        return res
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
 #Huan API
 #1 GET GET house/:house_id/room
 @app.route('/house/<int:house_id>/rooms', methods=['GET'], endpoint='getRoomOfHouse')
