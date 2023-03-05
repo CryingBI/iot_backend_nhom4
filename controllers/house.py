@@ -39,7 +39,7 @@ def getAllHouses():
     try:
 	    conn = mysql.connect()
 	    cursor = conn.cursor(pymysql.cursors.DictCursor)
-	    cursor.execute("SELECT user.name as username, email, user_id, house.name as name, phone_number, address, created_at, updated_at FROM house, user WHERE house.user_id = user.id")
+	    cursor.execute("SELECT house.id, user.name as username, email, user_id, house.name as name, phone_number, address, created_at, updated_at FROM house, user WHERE house.user_id = user.id")
 	    rows = cursor.fetchall()
 	    res = jsonify(rows)
 	    res.status_code = 200
