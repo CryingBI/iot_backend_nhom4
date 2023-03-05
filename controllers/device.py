@@ -124,3 +124,54 @@ def deleteDevices(id):
     finally:
         cursor.close()
         conn.close()
+
+
+#Huan API
+#1 GET room/:room_id/device
+@app.route('/room/<int:room_id>/devices', methods=['GET'], endpoint='getDeviceOfRoom')
+@jwt_required()
+def getDeviceOfRoom(room_id):
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM device_room where room_id=%s", room_id)
+        rows = cursor.fetchall()
+        res = jsonify(rows)
+        res.status_code = 200
+        return res
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+# #2 POST house/:house_id/room
+# @app.route('/room/<int:room_id>/device', methods=['POST'], endpoint='createDeviceOfRoom')
+# @jwt_required()
+# def createDeviceOfRoom(room_id):
+#     conn = None
+#     cursor = None
+#     try:
+#         _json = request.json
+#         _code = _json['code']
+#         _created = datetime.utcnow()
+#         _updated = datetime.utcnow()
+#         # validate
+#         if  _name != None and request.method == 'POST':
+#             # save edited
+#             sql = "INSERT INTO house (house_id, name, created_at, updated_at) VALUES (%s, %s, %s, %s)"
+#             data = (house_id, _name, _created, _updated)
+#             conn = mysql.connect()
+#             cursor = conn.cursor()
+#             cursor.execute(sql, data)
+#             conn.commit()
+#             res = jsonify({"message": "Create room successfully"})
+#             res.status_code = 200
+#             return res
+#         else:
+#             res = jsonify({"message": "Cannot create room"})
+#             return res
+#     except Exception as e:
+#         print(e)

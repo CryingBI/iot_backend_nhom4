@@ -45,7 +45,7 @@ def createRoomOfHouse(house_id):
         # validate
         if  _name != None and request.method == 'POST':
             # save edited
-            sql = "INSERT INTO house (house_id, name, created_at, updated_at) VALUES (%s, %s, %s, %s)"
+            sql = "INSERT INTO room (house_id, name, created_at, updated_at) VALUES (%s, %s, %s, %s)"
             data = (house_id, _name, _created, _updated)
             conn = mysql.connect()
             cursor = conn.cursor()
