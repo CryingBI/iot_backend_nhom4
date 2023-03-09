@@ -56,7 +56,9 @@ def controlDevice(id):
         cursor = conn.cursor()
         cursor.execute(sql, data)
         conn.commit()
-        client.publish("/iot_project_nhom04", payload=json.dumps(_json), qos=1)
+        client.publish("/iot_project_nhom04", payload=json.dumps(_json))
+        client.publish("/iot_project_nhom04", payload=json.dumps(_json))
+
         res = jsonify(_json)
         return res
     except Exception as e:

@@ -40,14 +40,13 @@ def createUser():
         _name = _json['name']
         _phone_number = _json['phone_number']
         _email = _json['email']
-        _role = _json['role']
         _password = _json['password']
         #validate
         if _name!=None and _email!=None and request.method == 'POST':
             #save edited
             _hashed_password = hashlib.sha256(_password.encode('utf-8')).hexdigest()
-            sql = "INSERT INTO user (name, phone_number, email, role, password) VALUES (%s, %s, %s, %s, %s)"
-            data = (_name, _phone_number, _email, _role, _hashed_password)
+            sql = "INSERT INTO user (name, phone_number, email, password) VALUES (%s, %s, %s, %s)"
+            data = (_name, _phone_number, _email, _hashed_password)
             conn = mysql.connect()
             cursor = conn.cursor()
             cursor.execute(sql, data)
