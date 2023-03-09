@@ -136,7 +136,7 @@ def getDetailDevice(room_id, device_id):
     try:
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT * FROM device_room WHERE room_id = %s AND id=%s", (room_id, device_id))
+        cursor.execute("SELECT device_room.id, code, device_id, room_id, is_active, param, device_room.created_at, device_room.updated_at, name FROM device_room, device WHERE room_id = %s AND device_room.id=%s AND device_room.device_id=device.id", (room_id, device_id))
         row = cursor.fetchone()
         res = jsonify(row)
         res.status_code = 200
@@ -156,7 +156,7 @@ def getDeviceOfRoom(room_id):
     try:
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT * FROM device_room where room_id=%s", room_id)
+        cursor.execute("SELECT device_room.id, code, device_id, room_id, is_active, param, device_room.created_at, device_room.updated_at, name FROM device_room, device WHERE room_id =%s AND device_room.device_id=device.id", room_id)
         rows = cursor.fetchall()
         res = jsonify(rows)
         res.status_code = 200
@@ -177,15 +177,15 @@ def createDeviceOfRoom(room_id):
         _json = request.json
         _code = _json['code']
         _device_id = _json['device_id']
-        _is_active = _json['is_active']
-        _param = _json['param']
+        # _is_active = _json['is_active']
+        # _param = _json['param']
         _created = datetime.utcnow()
         _updated = datetime.utcnow()
         # validate
         if  _code != None and request.method == 'POST':
             # save edited
-            sql = "INSERT INTO device_room (code, device_id, room_id, is_active, param, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-            data = (_code, _device_id, room_id, _is_active, _param, _created, _updated)
+            sql = "INSERT INTO device_room (code, device_id, room_id, device_room.created_at, device_room.updated_at) VALUES (%s, %s, %s, %s, %s)"
+            data = (_code, _device_id, room_id, _created, _updated)
             conn = mysql.connect()
             cursor = conn.cursor()
             cursor.execute(sql, data)
