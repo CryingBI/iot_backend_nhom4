@@ -1,5 +1,4 @@
 import pymysql
-import time, json
 import paho.mqtt.client as paho
 from app import *
 from utils.db import mysql
@@ -35,6 +34,7 @@ client.on_message = on_message
 client.on_publish = on_publish
 
 client.subscribe("/iot_project_nhom04", qos=1)
+#client.loop_forever()
 
 #API dieu khien thiet bi
 @app.route('/device/<int:id>/control', methods=['PUT'], endpoint='controlDevice')
@@ -56,7 +56,6 @@ def controlDevice(id):
         cursor = conn.cursor()
         cursor.execute(sql, data)
         conn.commit()
-        client.publish("/iot_project_nhom04", payload=json.dumps(_json))
         client.publish("/iot_project_nhom04", payload=json.dumps(_json))
 
         res = jsonify(_json)

@@ -5,10 +5,7 @@ from flask import jsonify
 from flask import flash, request
 from datetime import datetime
 from flask_jwt_extended import jwt_required
-from flask_jwt_extended import get_jwt_identity
-
-#Thêm filter user-house
-#thêm filler post user-house
+#from flask_jwt_extended import get_jwt_identity
 
 #GET detail house
 @app.route('/house/<int:id>', methods=['GET'], endpoint='getDetailHouse')

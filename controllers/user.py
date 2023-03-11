@@ -6,11 +6,11 @@ from flask import jsonify
 from flask import flash, request
 #from datetime import datetime
 from flask_jwt_extended import jwt_required
-from flask_jwt_extended import get_jwt_identity
+#from flask_jwt_extended import get_jwt_identity
 
 #GET
 @app.route('/user', methods=['GET'])
-@cross_origin(supports_credentials=True)
+#@cross_origin(supports_credentials=True)
 @jwt_required()
 def getAllUsers():
     conn = None

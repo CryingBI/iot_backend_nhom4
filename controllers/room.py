@@ -5,10 +5,7 @@ from flask import jsonify
 from flask import flash, request
 from datetime import datetime
 from flask_jwt_extended import jwt_required
-from flask_jwt_extended import get_jwt_identity
-
-#Thêm filter house-room
-#thêm filler post house-room
+#from flask_jwt_extended import get_jwt_identity
 
 #GET detail room
 @app.route('/room/<int:id>', methods=['GET'], endpoint='getDetailRoom')
@@ -31,7 +28,7 @@ def getDetailRoom(id):
         conn.close()
 
 #Huan API
-#1 GET GET house/:house_id/room
+#1 GET house/:house_id/room
 @app.route('/house/<int:house_id>/rooms', methods=['GET'], endpoint='getRoomOfHouse')
 @jwt_required()
 def getRoomOfHouse(house_id):
