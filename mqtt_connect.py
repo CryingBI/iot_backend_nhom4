@@ -2,8 +2,8 @@ import time, json
 import paho.mqtt.client as paho
 from paho import mqtt
 
-content = json.dumps({"id":11, "packet_no":126, "temperature":30,
-"humidity":60, "tds":1100, "pH":5.0})
+# content = json.dumps({"id":11, "packet_no":126, "temperature":30,
+# "humidity":60, "tds":1100, "pH":5.0})
 
 # setting callbacks for different events to see if it works, print the message etc.
 def on_connect(client, userdata, flags, rc, properties=None):
