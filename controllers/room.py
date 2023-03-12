@@ -48,6 +48,26 @@ def getRoomOfHouse(house_id):
         cursor.close()
         conn.close()
 
+#1.2 GET /h/house/:house_id/room
+@app.route('/h/house/<int:house_id>/rooms', methods=['GET'], endpoint='getHRoomOfHouse')
+@jwt_required()
+def getHRoomOfHouse(house_id):
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM room where house_id=%s", house_id)
+        rows = cursor.fetchall()
+        res = jsonify({"rooms":rows})
+        res.status_code = 200
+        return res
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
 #2 POST house/:house_id/room
 @app.route('/house/<int:house_id>/room', methods=['POST'], endpoint='createRoomOfHouse')
 @jwt_required()

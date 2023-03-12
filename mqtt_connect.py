@@ -27,7 +27,7 @@ client = paho.Client(client_id="qa_hust", userdata=None, protocol=paho.MQTTv5)
 client.on_connect = on_connect
 
 client.connect("broker.hivemq.com", 1883)
-
+#client.loop_start()
 # setting callbacks, use separate functions like above for better visibility
 client.on_subscribe = on_subscribe
 client.on_message = on_message
@@ -41,4 +41,4 @@ client.subscribe("/iot_project_nhom04", qos=1)
 
 # loop_forever for simplicity, here you need to stop the loop manually
 # you can also use loop_start and loop_stop
-client.loop_forever()
+#client.loop_forever()

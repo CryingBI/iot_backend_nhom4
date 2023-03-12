@@ -13,8 +13,8 @@ from flask_jwt_extended import get_jwt_identity
 def getAllDevices():
     conn = None
     cursor = None
-    current_user = get_jwt_identity()
-    print(current_user)
+    # current_user = get_jwt_identity()
+    # print(current_user)
     try:
 	    conn = mysql.connect()
 	    cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -167,6 +167,26 @@ def getDeviceOfRoom(room_id):
         cursor.close()
         conn.close()
 
+#1.2 GET room/:room_id/device
+@app.route('/h/room/<int:room_id>/devices', methods=['GET'], endpoint='getHDeviceOfRoom')
+@jwt_required()
+def getHDeviceOfRoom(room_id):
+    conn = None
+    cursor = None
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT device_room.id, device_name, device_detail, code, device_id, room_id, is_active, param, device_room.created_at, device_room.updated_at, name FROM device_room, device WHERE room_id =%s AND device_room.device_id=device.id", room_id)
+        rows = cursor.fetchall()
+        res = jsonify({"deviceRooms":rows})
+        res.status_code = 200
+        return res
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
 #2 POST room/:room_id/device
 @app.route('/room/<int:room_id>/device', methods=['POST'], endpoint='createDeviceOfRoom')
 @jwt_required()
@@ -229,6 +249,7 @@ def updateDeviceOfRoom(room_id, id):
             return res
     except Exception as e:
         print(e)
+
 
 #4 Delete room/:room_id/device/:device_id/delete
 @app.route('/room/<int:room_id>/device/<int:id>/delete', methods=['POST', 'DELETE'], endpoint='deleteDeviceOfRoom')

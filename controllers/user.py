@@ -6,7 +6,28 @@ from flask import jsonify
 from flask import flash, request
 #from datetime import datetime
 from flask_jwt_extended import jwt_required
-#from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import get_jwt_identity
+
+#GET detail user
+@app.route('/h/user_detail', methods=['GET'])
+@jwt_required()
+def getDetailUsers():
+    conn = None
+    cursor = None
+    current_user = get_jwt_identity()
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM user WHERE email = %s", current_user)
+        row = cursor.fetchone()
+        res = jsonify({"user":row})
+        res.status_code = 200
+        return res
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
 
 #GET
 @app.route('/user', methods=['GET'])
@@ -45,15 +66,26 @@ def createUser():
         if _name!=None and _email!=None and request.method == 'POST':
             #save edited
             _hashed_password = hashlib.sha256(_password.encode('utf-8')).hexdigest()
-            sql = "INSERT INTO user (name, phone_number, email, password) VALUES (%s, %s, %s, %s)"
-            data = (_name, _phone_number, _email, _hashed_password)
+            #check email exist
+            sql_check = "Select * from user where email=%s"
+            data_check = (_email)
             conn = mysql.connect()
-            cursor = conn.cursor()
-            cursor.execute(sql, data)
-            conn.commit()
-            res = jsonify({"message": "Create user successfully"})
-            res.status_code = 200
-            return res
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+            cursor.execute(sql_check, data_check)
+            row = cursor.fetchone()
+            if (row):
+                res = jsonify({"message": "Email is exist"})
+                return res
+            else:
+                sql = "INSERT INTO user (name, phone_number, email, password) VALUES (%s, %s, %s, %s)"
+                data = (_name, _phone_number, _email, _hashed_password)
+                conn = mysql.connect()
+                cursor = conn.cursor()
+                cursor.execute(sql, data)
+                conn.commit()
+                res = jsonify({"message": "Create user successfully"})
+                res.status_code = 200
+                return res
         else:
             res = jsonify({"message": "Cannot create user"})
             return res

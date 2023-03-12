@@ -5,7 +5,7 @@ from flask import jsonify
 from flask import flash, request
 from datetime import datetime
 from flask_jwt_extended import jwt_required
-#from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import get_jwt_identity
 
 #GET detail house
 @app.route('/house/<int:id>', methods=['GET'], endpoint='getDetailHouse')
@@ -39,6 +39,27 @@ def getAllHouses():
 	    cursor.execute("SELECT house.id, user.name as username, email, user_id, house.name as name, phone_number, address, created_at, updated_at FROM house, user WHERE house.user_id = user.id")
 	    rows = cursor.fetchall()
 	    res = jsonify(rows)
+	    res.status_code = 200
+	    return res
+    except Exception as e:
+	    print(e)
+    finally:
+	    cursor.close()
+	    conn.close()
+
+#GET /h/houses
+@app.route('/h/houses', methods=['GET'], endpoint='getHAllHouses')
+@jwt_required()
+def getHAllHouses():
+    conn = None
+    cursor = None
+    current_user = get_jwt_identity()
+    try:
+	    conn = mysql.connect()
+	    cursor = conn.cursor(pymysql.cursors.DictCursor)
+	    cursor.execute("SELECT house.id, user.name as username, email, user_id, house.name as name, phone_number, address, created_at, updated_at FROM house, user WHERE house.user_id = user.id AND email=%s", current_user)
+	    rows = cursor.fetchall()
+	    res = jsonify({"houses":rows})
 	    res.status_code = 200
 	    return res
     except Exception as e:
